@@ -1,0 +1,68 @@
+<%= form_with(model: upload, local: true) do |form| %>
+  <% if upload.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(upload.errors.count, "error") %> prohibited this upload from being saved:</h2>
+
+      <ul>
+        <% upload.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :mix_files,  'Mulitple Images/Pdfs/Videos files Only' %>
+    <%= form.file_field :mix_files, multiple: true, onChange: "readURL(this)", data: {extension: 'mixFiles'} %>
+  </div>
+
+  <div class="field">
+    <%= form.label :image, 'Image file only' %>
+    <%= form.file_field :image, onChange: "readURL(this)", data: {extension: 'image'} %>
+  </div>
+
+  <div class="field">
+    <%= form.label :mp4_files, 'Mulitple MP4 files Only' %>
+    <%= form.file_field :mp4_files, multiple: true, onChange: "readURL(this)", data: { extension: 'mp4Only' } %>
+  </div>
+
+  <div class="actions">
+   <%= form.submit 'Upload Now' %>
+  </div>
+<% end %>
+
+<script>
+  let fileExtensions = {
+    image: [".jpg", ".jpeg", ".png"],
+    mixFiles: [
+      ".jpg", ".jpeg", ".png",
+      ".doc", ".docx",
+      ".xls", ".xlsx",
+      ".pdf", ".csv",
+      '.mp4', '.mov', '.wmv','.avi', '.avchd', '.flv', '.mkv'
+    ],
+    mp4Only: ['.mp4']
+  };
+
+  //Provide Read URL For Attachments
+  function readURL(input) {
+    let dataExtension = $(event.target).data("extension");
+    let allowedExtensions = fileExtensions[dataExtension];
+    let isFileRequired = $(event.target).data("required") || false;
+    if (input.files && input.files[0]) {
+      let reader = new FileReader(),
+        filePath = input.value,
+        fileExtension =
+          "." +
+          filePath
+            .split(".")
+            .slice(-1)
+            .pop();
+      if (allowedExtensions.indexOf(fileExtension) == -1) {
+        alert("Please upload only " + allowedExtensions.join(", ") + " files.")
+        input.value = ''
+        return;
+      }
+    }
+  }
+</script>

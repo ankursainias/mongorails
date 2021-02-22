@@ -1,0 +1,43 @@
+<div class="container">
+<p id="notice"><%= notice %></p>
+<%= link_to 'New Upload', new_upload_path %>
+
+<h1 class="font-weight-light text-center text-lg-left mt-4 mb-0">Thumbnail</h1>
+<hr class="mt-2 mb-5">
+<div class="row text-center">
+  <% @uploads.each do |upload| %>
+  <% extension = File.extname(upload.file.path) %>
+    <% if upload.file.content_type.include?('video') %>
+      <div class="col-md-4 border border-primary">
+        <iframe class="embed-responsive-item" src="<%= upload.file.url %>"></iframe>
+        <%= link_to 'Destroy', upload, method: :delete, data: { confirm: 'Are you sure?' } %>
+      </div> 
+    <% elsif upload.file.content_type.include?('image') %>
+      <div class="col-md-4 border border-primary popup_link", target= '_blank' full-version= "<%= upload.file.url %>">
+          <%= image_tag upload.file.thumb.url, class: "img-fluid  img-thumbnail" %>
+          <div class="thumbnail">
+           <%= link_to 'Destroy', upload, method: :delete, data: { confirm: 'Are you sure?' } %>
+          </div>
+      </div>
+     <% elsif ['.csv', '.pdf', '.doc', '.docx'].include?(extension) %>
+        <div class="col-md-4 border border-primary">
+          <p class="uploadedimage">
+            <%= link_to upload.file.url || "javascript:void(0);", target: '_blank' do %>
+              <%= image_tag preview_or_default_image_for_file(upload.file), class: "mCS_img_loaded", size: '40x40', alt: "File"  %>
+            <%end%>
+          </p> 
+        </div>
+    <% end %>
+  <% end %>
+</div>
+
+<script type="text/javascript">
+  $(document).ready(function() {
+     $(".popup_link").click(function(e) {
+        e.preventDefault();
+          var wi = window.open();
+          var html = $('<img>').attr('src', this.getAttribute('full-version'))
+          $(wi.document.body).html(html);
+     });
+  });
+</script>
